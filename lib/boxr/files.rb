@@ -128,7 +128,7 @@ module Boxr
       file_info.entries[0]
     end
 
-    def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
+    def upload_new_version_of_file(path_to_file, file, name: nil, content_modified_at: nil, send_content_md5: true,
                                     preflight_check: true, if_match: nil)
       file_id = ensure_id(file)
       preflight_check_new_version_of_file(path_to_file, file_id) if preflight_check
@@ -139,9 +139,10 @@ module Boxr
 
       File.open(path_to_file) do |file|
         content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
-        attributes = {filename: file}
+        attributes = name ? {name: name} : {}
         attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
-        file_info, response = post(uri, attributes, process_body: false, content_md5: content_md5, if_match: if_match)
+        body = {attributes: Oj.dump(attributes), file: file}
+        file_info, response = post(uri, body, process_body: false, content_md5: content_md5, if_match: if_match)
       end
 
       file_info.entries[0]
