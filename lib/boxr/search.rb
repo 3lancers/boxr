@@ -46,7 +46,7 @@ module Boxr
       search_query[:offset] = offset unless offset.nil?
 
       results, response = get(SEARCH_URI, query: search_query)
-      results.entries
+      results
     end
 
     private
