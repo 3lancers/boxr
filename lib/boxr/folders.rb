@@ -10,7 +10,7 @@ module Boxr
 
       folder = path_folders.inject(Boxr::ROOT) do |parent_folder, folder_name|
         folders = folder_items(parent_folder, fields: [:id, :name]).folders
-        folder = folders.select{|f| f.name == folder_name}.first
+        folder = folders.select{|f| f.name.casecmp?(folder_name) }.first
         raise BoxrError.new(boxr_message: "Folder not found: '#{folder_name}'") if folder.nil?
         folder
       end
@@ -103,10 +103,10 @@ module Boxr
       new_folder
     end
 
-    def create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+    def create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil, password: nil)
       folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}"
-      create_shared_link(uri, folder_id, access, unshared_at, can_download, can_preview)
+      create_shared_link(uri, folder_id, access, unshared_at, can_download, can_preview, password)
     end
 
     def disable_shared_link_for_folder(folder)
