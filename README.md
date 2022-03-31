@@ -223,10 +223,16 @@ download_url(file, version: nil)
 upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil,
             preflight_check: true, send_content_md5: true)
 
+upload_file_from_io(io, parent, name:, content_created_at: nil, content_modified_at: nil,
+                     preflight_check: true, send_content_md5: true)
+
 delete_file(file, if_match: nil)
 
 upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
                             preflight_check: true, if_match: nil)
+
+upload_new_version_of_file_from_io(io, file, name: nil, content_modified_at: nil, send_content_md5: true,
+                                    preflight_check: true, if_match: nil)
 
 versions_of_file(file)
 
@@ -289,6 +295,12 @@ get_web_link(web_link)
 update_web_link(web_link, url: nil, parent: nil, name: nil, description: nil)
 
 delete_web_link(web_link)
+
+trashed_web_link(web_link, fields: [])
+
+delete_trashed_web_link(web_link)
+
+restore_trashed_web_link(web_link, name: nil, parent: nil)
 ```
 #### [Comments](https://developer.box.com/en/reference/resources/comment/)
 ```ruby
@@ -444,6 +456,7 @@ delete_folder_metadata(folder, scope, template)
 
 get_enterprise_templates
 get_metadata_template_by_name(scope, template_key)
+get_metadata_template_by_id(template_id)
 
 create_metadata_template(display_name, template_key: nil, fields: [], hidden: nil)
 delete_metadata_template(scope, template_key)
@@ -463,6 +476,29 @@ apply_watermark_on_folder(folder)
 
 remove_watermark_on_folder(folder)
 ```
+
+#### [Webhooks](https://developer.box.com/en/reference/resources/webhook/) & [Webhook Signatures](https://developer.box.com/guides/webhooks/handle/setup-signatures/)
+```ruby
+create_webhook(target_id, target_type, triggers, address)
+
+get_webhooks(marker: nil, limit: nil)
+
+get_webhook(webhook_id)
+
+update_webhook(webhook_id, attributes)
+
+delete_webhook(webhook_id)
+
+# When receiving a webhook, it is advised to verify that it was sent by Box
+Boxr::WebhookValidator.new(
+  headers,
+  payload,
+  primary_signature_key: primary_signature_key,
+  secondary_signature_key: secondary_signature_key
+).valid_message?
+
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )
