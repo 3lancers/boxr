@@ -155,7 +155,7 @@ module Boxr
         headers["Content-Type"] = content_type unless content_type.nil?
         headers["Digest"] = digest unless digest.nil?
 
-        body.rewind
+        body.rewind if body.respond_to?(:rewind)
         BOX_CLIENT.post(uri, body: body, query: query, header: headers)
       end
 
@@ -175,7 +175,7 @@ module Boxr
         headers["Content-Range"] = content_range unless content_range.nil?
         headers["Digest"] = digest unless digest.nil?
 
-        body.rewind
+        body.rewind if body.respond_to?(:rewind)
         BOX_CLIENT.put(uri, body: body, query: query, header: headers)
       end
 
